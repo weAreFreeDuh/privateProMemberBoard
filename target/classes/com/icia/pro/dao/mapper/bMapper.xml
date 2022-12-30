@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Board">
+	
+	<!-- 회원아이디가져오기 -->
+	<select id="bWriteForm" parameterType="String" resultType="String">
+		SELECT memId FROM MEMBER WHERE memId = #{memId}
+	</select>
+	
+	<!-- 게시글 작성 -->
+	<insert id="bWrite" parameterType="board">
+		INSERT INTO BOARD VALUES(BN_SEQ.NEXTVAL,#{boWriter},#{boTitle},#{boContent},SYSDATE,0,#{boFileName})
+	</insert>
+	
+	<!-- 전체 게시글 수 -->
+	<select id="bCount" resultType="int">
+		SELECT COUNT(*) FROM BOARD
+	</select>
+	
+	<!-- 게시글 목록 -->
+	<select id="bList" parameterType="paging" resultType="board">
+		SELECT *
+		FROM BOARDLIST WHERE RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 검색기능 -->
+	<select id="mSearch" parameterType="search" resultType="board">
+		SELECT * FROM BOARD WHERE ${category} LIKE '%'||#{keyword}||'%'
+	</select>
+	
+	<!-- 상세보기 -->
+	<select id="bView" parameterType="int" resultType="board">
+		SELECT * FROM BOARD WHERE BONUM = #{boNum}
+	</select>
+	
+	<!-- 게시글수정 -->
+	<update id="bModify" parameterType="board">
+		UPDATE BOARD SET BOTITLE= #{boTitle}, BOCONTENT=#{boContent}, BODATE=SYSDATE, BOFILENAME =#{boFileName} WHERE BONUM=#{boNum}
+	</update>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="bDelete" parameterType="int">
+		DELETE FROM BOARD WHERE BONUM = #{boNum}
+	</delete>
+	
+	<!-- 게시글에 댓글 삭제 -->
+	<delete id="bDeleteComment" parameterType="int">
+		DELETE FROM COMMENTS WHERE CBNUM = #{boNum}
+	</delete>
+	
+	<!-- 조회수 증가 -->
+	<update id="bHit" parameterType="board">
+		UPDATE BOARD SET BOHIT=#{boHit} +1
+		WHERE BONUM =#{boNum}
+	</update>
+		
+</mapper> 
